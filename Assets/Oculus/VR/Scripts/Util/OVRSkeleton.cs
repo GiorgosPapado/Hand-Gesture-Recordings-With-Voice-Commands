@@ -346,12 +346,12 @@ public class OVRSkeleton : MonoBehaviour
 
 	private void Update()
 	{
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 		if (ShouldInitialize())
 		{
 			Initialize();
 		}
-#endif
+//#endif
 
 		if (!IsInitialized || _dataProvider == null)
 		{

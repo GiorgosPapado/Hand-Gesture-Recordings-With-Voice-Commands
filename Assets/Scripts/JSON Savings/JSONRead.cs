@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 
 
 public class JSONRead : MonoBehaviour 
@@ -16,7 +17,6 @@ public class JSONRead : MonoBehaviour
     private List<TrackingData> right = new();
     private List<float> hour = new();
     private FrameData frameData;
-    private List<float> ss = new();
     private DataPersistenceManager manager;
     
     private void Start()
@@ -27,8 +27,7 @@ public class JSONRead : MonoBehaviour
     private void Awake()
     {
         manager = GetComponent<DataPersistenceManager>();
-        Debug.Log(Application.persistentDataPath);
-        dataHandler = new FileDataHandler(Application.persistentDataPath, jsonFile);
+        dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Build2/Gestures", jsonFile);
         frameData = dataHandler.Load().frameData;
         left = frameData.left_hand;
         right = frameData.right_hand;

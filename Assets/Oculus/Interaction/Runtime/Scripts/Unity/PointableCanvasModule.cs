@@ -15,6 +15,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.Assertions;
 using System;
+using System.Linq;
 
 namespace Oculus.Interaction
 {
@@ -94,7 +95,7 @@ namespace Oculus.Interaction
             pointerCanvas.WhenPointerEventRaised -= pointerCanvasAction;
 
             List<int> pointerIDs = new List<int>(_pointerMap.Keys);
-            foreach (int pointerID in pointerIDs)
+            foreach (int pointerID in pointerIDs.ToList())
             {
                 Pointer pointer = _pointerMap[pointerID];
                 if (pointer.Canvas != pointerCanvas.Canvas)
@@ -328,13 +329,13 @@ namespace Oculus.Interaction
 
       public override void Process()
         {
-            foreach (Pointer pointer in _pointersForDeletion)
+            foreach (Pointer pointer in _pointersForDeletion.ToList())
             {
                 ProcessPointer(pointer, true);
             }
             _pointersForDeletion.Clear();
 
-            foreach (Pointer pointer in _pointerMap.Values)
+            foreach (Pointer pointer in _pointerMap.Values.ToList())
             {
                 ProcessPointer(pointer);
             }

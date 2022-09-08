@@ -15,6 +15,7 @@ public class VoiceRecord : MonoBehaviour
     private bool left = false;
     private bool right = false;
     private bool both = false;
+    private bool cancel = false;
 
         private void Start()
     {
@@ -23,6 +24,7 @@ public class VoiceRecord : MonoBehaviour
         actions.Add("stop", Stop);
         actions.Add("left", LeftHanded);
         actions.Add("right", RightHanded);
+        actions.Add("cancel", Cancel);
         keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray(),confidence);        
         keywordRecognizer.OnPhraseRecognized += RecognizedWord;
         keywordRecognizer.Start();
@@ -55,6 +57,18 @@ public class VoiceRecord : MonoBehaviour
             {
                 manager.Calculate(data);
             }
+        if (cancel)
+        {
+            data.left_hand.Clear();
+            data.right_hand.Clear();
+            data.hmd.pos.Clear();
+            data.hmd.rotation.Clear();
+            data.left_hand_global.pos.Clear();
+            data.left_hand_global.rotation.Clear();
+            data.right_hand_global.pos.Clear();
+            data.right_hand_global.rotation.Clear();
+            data.timestamps.Clear();
+        }
         }
 
     private void RecognizedWord(PhraseRecognizedEventArgs speech)
@@ -67,7 +81,8 @@ public class VoiceRecord : MonoBehaviour
     {
         if(left == false && right == false && both == false)
             PlayerStats.Rounds += 1;
-            
+
+        cancel = false;
         left = true;
             Debug.Log("Start Left Hand - Gesture");
     }
@@ -76,7 +91,8 @@ public class VoiceRecord : MonoBehaviour
         if (left == false && right == false && both == false)
             PlayerStats.Rounds += 1;
 
-            right = true;
+        cancel = false;
+        right = true;
             Debug.Log("Start Right Hand - Gesture");
     }
 
@@ -85,7 +101,8 @@ public class VoiceRecord : MonoBehaviour
         if (left == false && right == false && both == false)
             PlayerStats.Rounds += 1;
 
-            both = true;
+        cancel = false;
+        both = true;
             Debug.Log("Start Both Hands - Gesture");
     }
 
@@ -109,5 +126,14 @@ public class VoiceRecord : MonoBehaviour
         right = false;
         both = false;
         Debug.Log("Stop Gesture");      
+    }
+
+    private void Cancel()
+    {
+        cancel = true;
+        left = false;
+        right = false;
+        both = false;
+        Debug.Log("Gestured Cancelled");
     }
 }

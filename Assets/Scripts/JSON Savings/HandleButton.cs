@@ -26,7 +26,7 @@ public class HandleButton : MonoBehaviour
     public void Dismiss()
     {
         dismissButton = EventSystem.current.currentSelectedGameObject;
-        Debug.Log(dismissButton);
+        //Debug.Log(dismissButton);
         //dismissButton.name = EventSystem.current.currentSelectedGameObject.name;
         manager.button = dismissButton;
         for (int i = 0; i < buttons.Length; i++)

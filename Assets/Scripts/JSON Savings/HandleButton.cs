@@ -14,8 +14,8 @@ public class HandleButton : MonoBehaviour
 
     private void Start()
     {
-        manager = GetComponent<DataPersistenceManager>();
-        buttons = FindObjectsOfType<Button>();
+/*        manager = GetComponent<DataPersistenceManager>();
+        buttons = FindObjectsOfType<Button>();*/
         //buttons = Resources.FindObjectsOfTypeAll<Button>();
     }
     /*    void ChangeFunction(UnityEngine.UnityEvents.UnityAction action)
@@ -25,6 +25,8 @@ public class HandleButton : MonoBehaviour
         }*/
     public void Dismiss()
     {
+        manager = GetComponent<DataPersistenceManager>();
+        buttons = FindObjectsOfType<Button>();
         dismissButton = EventSystem.current.currentSelectedGameObject;
         //Debug.Log(dismissButton);
         //dismissButton.name = EventSystem.current.currentSelectedGameObject.name;

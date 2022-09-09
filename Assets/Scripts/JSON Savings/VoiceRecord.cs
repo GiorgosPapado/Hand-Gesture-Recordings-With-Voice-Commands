@@ -16,6 +16,7 @@ public class VoiceRecord : MonoBehaviour
     private bool right = false;
     private bool both = false;
     private bool cancel = false;
+    public GameObject sunLight;
 
         private void Start()
     {
@@ -45,29 +46,22 @@ public class VoiceRecord : MonoBehaviour
         {
             if (right)
             {
-               manager.Calculate(data);
-               data.left_hand.Clear();
+                manager.Calculate(data);
+                data.left_hand.Clear();
             }
-            if (left)
+            else if (left)
             {
                 manager.Calculate(data);
                 data.right_hand.Clear();
             }
-            if (both)
+            else if (both)
             {
                 manager.Calculate(data);
             }
         if (cancel)
         {
-            data.left_hand.Clear();
-            data.right_hand.Clear();
-            data.hmd.pos.Clear();
-            data.hmd.rotation.Clear();
-            data.left_hand_global.pos.Clear();
-            data.left_hand_global.rotation.Clear();
-            data.right_hand_global.pos.Clear();
-            data.right_hand_global.rotation.Clear();
-            data.timestamps.Clear();
+            Purge();
+            cancel = false;
         }
         }
 
@@ -79,40 +73,76 @@ public class VoiceRecord : MonoBehaviour
 
     private void LeftHanded()
     {
-        if(left == false && right == false && both == false)
+        Purge();
+        if (left == false && right == false && both == false)
+        {
             PlayerStats.Rounds += 1;
-
-        cancel = false;
-        left = true;
             Debug.Log("Start Left Hand - Gesture");
+        }
+        sunLight.SetActive(true);
+        both = right = cancel = false;
+        left = true;
     }
     private void RightHanded()
     {
+        Purge();
         if (left == false && right == false && both == false)
+        {
             PlayerStats.Rounds += 1;
-
-        cancel = false;
-        right = true;
             Debug.Log("Start Right Hand - Gesture");
+        }
+        sunLight.SetActive(true);
+        both = left = cancel = false;
+        right = true;    
     }
 
     private void Record()
     {
+        Purge();
         if (left == false && right == false && both == false)
+        {
             PlayerStats.Rounds += 1;
-
-        cancel = false;
-        both = true;
             Debug.Log("Start Both Hands - Gesture");
+        }
+        sunLight.SetActive(true);
+        right = left = cancel = false;
+        both = true;
     }
 
     private void Stop()
     {
-        if(PlayerStats.Rounds > 10)
-        {
-            PlayerStats.Rounds = 0;
+        if (right == left && left == both)
+        { 
+        
         }
-        manager.SaveGesture(data);
+        else
+        {
+            if (PlayerStats.Rounds > 10)
+            {
+                PlayerStats.Rounds = 0;
+            }
+            manager.SaveGesture(data);
+            sunLight.SetActive(false);
+            both = left = right = false;
+            Debug.Log("Stop Gesture");
+        }
+    }
+
+    private void Cancel()
+    {
+        cancel = true;
+        both = left = right = false;
+        Debug.Log("Gestured Cancelled");
+
+        if (PlayerStats.Rounds > 0)
+        {
+            PlayerStats.Rounds -= 1;
+        }
+        Purge();
+    }
+
+    private void Purge()
+    {
         data.left_hand.Clear();
         data.right_hand.Clear();
         data.hmd.pos.Clear();
@@ -122,18 +152,6 @@ public class VoiceRecord : MonoBehaviour
         data.right_hand_global.pos.Clear();
         data.right_hand_global.rotation.Clear();
         data.timestamps.Clear();
-        left = false;
-        right = false;
-        both = false;
-        Debug.Log("Stop Gesture");      
-    }
-
-    private void Cancel()
-    {
-        cancel = true;
-        left = false;
-        right = false;
-        both = false;
-        Debug.Log("Gestured Cancelled");
+        sunLight.SetActive(false);
     }
 }

@@ -35,9 +35,13 @@ public class AnimationRead : MonoBehaviour
     {
         StopCoroutine(nameof(MyJoints));
         counter = false;
-        Destroy(lefty.gameObject);
-        Destroy(righty.gameObject);
+        if(lefty != null)
+            Destroy(lefty.gameObject);
+        if (righty != null)
+            Destroy(righty.gameObject);
+        //if(leftSkeleton.gameObject != null)
         leftSkeleton.gameObject.SetActive(true);
+        //if(rightSkeleton.gameObject != null)
         rightSkeleton.gameObject.SetActive(true);
     }
 
@@ -61,6 +65,8 @@ public class AnimationRead : MonoBehaviour
             lefty.transform.localScale *= 3;
             leftSkeleton.gameObject.SetActive(false);
             rightSkeleton.gameObject.SetActive(false);
+            lefty.GetComponent<OVRHand>().enabled = false;
+            righty.GetComponent<OVRHand>().enabled = false;
         }
     }
 
@@ -113,14 +119,16 @@ public class AnimationRead : MonoBehaviour
                 {
                     righty.gameObject.SetActive(false);
                 }
-                if (j == 0)
-                {
-                    yield return new WaitForSeconds(Time.timeScale);
-                }
-                else
-                {
-                    yield return new WaitForSeconds((hour[j] - hour[j - 1]));
-                }
+/*                    if (j == 0)
+                    {
+                        yield return new WaitForSeconds(Time.timeScale);
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds((hour[j] - hour[j - 1]));
+                    }*/
+                yield return new WaitForSeconds(j == 0 ? Time.timeScale : hour[j] - hour[j - 1]);
+               
             }
         }
     }

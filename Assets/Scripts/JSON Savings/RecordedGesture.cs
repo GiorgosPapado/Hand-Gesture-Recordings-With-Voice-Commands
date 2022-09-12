@@ -53,7 +53,7 @@ public class RecordedGesture : MonoBehaviour
             jsonFile = manager.Name;
             //Debug.Log(manager.button.name);
             Debug.Log(jsonFile);
-            dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Build2/Gestures", jsonFile);
+            dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", jsonFile);
             frameData = dataHandler.Load().frameData;
             left = frameData.left_hand;
             right = frameData.right_hand;
@@ -66,7 +66,9 @@ public class RecordedGesture : MonoBehaviour
             leftSkeleton.gameObject.SetActive(false);
             rightSkeleton.gameObject.SetActive(false);
             lefty.GetComponent<OVRHand>().enabled = false;
+            lefty.GetComponent<OVRCustomSkeleton>().enabled = false;
             righty.GetComponent<OVRHand>().enabled = false;
+            righty.GetComponent<OVRCustomSkeleton>().enabled = false;
         }
     }
 

@@ -109,7 +109,7 @@ public class VoiceRecord : MonoBehaviour
         both = true;
     }
 
-    private void Stop()
+    public void Stop()
     {
         if (right == left && left == both)
         { 
@@ -141,7 +141,7 @@ public class VoiceRecord : MonoBehaviour
         Purge();
     }
 
-    private void Purge()
+    public void Purge()
     {
         data.left_hand.Clear();
         data.right_hand.Clear();

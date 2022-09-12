@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class LightEffects : MonoBehaviour
 {
     public Light lightToFade;
-    public float eachFadeTime = 4f;
-    public float fadeWaitTime = 2f;
+    private float eachFadeTime = 5f;
+    private float fadeWaitTime = 1f;
+    public DataPersistenceManager manager;
+    private FrameData data = new();
+    public VoiceRecord record;
+
 
     private void OnEnable()
     {
@@ -21,7 +26,7 @@ public class LightEffects : MonoBehaviour
     IEnumerator FadeInAndOut(Light lightToFade, bool fadeIn, float duration)
     {
         float minLuminosity = 0; // min intensity
-        float maxLuminosity = 20; // max intensity
+        float maxLuminosity = 10; // max intensity
 
         float counter = 0f;
 
@@ -46,6 +51,12 @@ public class LightEffects : MonoBehaviour
             counter += Time.deltaTime;
 
             lightToFade.intensity = Mathf.Lerp(a, b, counter / duration);
+            if (lightToFade.intensity == 0)
+            {
+                if (PlayerStats.Rounds > 0)
+                    PlayerStats.Rounds -= 1;
+                record.Stop();
+            }
 
             yield return null;
         }

@@ -24,7 +24,7 @@ public class DataPersistenceManager : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log(Directory.GetCurrentDirectory() + "/Build2/Gestures");
+        Debug.Log(Directory.GetCurrentDirectory() + "/Gestures");
         /*  
            Debug.Log(Application.persistentDataPath);
            if (Instance != null)
@@ -52,7 +52,7 @@ public class DataPersistenceManager : MonoBehaviour
         TrackingData rightTrackData = new TrackingData();
         string tt = DateTime.Now.ToString("dd MMMM HH mm");
         Name = button.name + " " + ClassID +" "+ fileName.ToString().Substring(0, 5) + " "+ tt + " " + PlayerStats.Rounds.ToString() + ".json";
-        dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Build2/Gestures", Name);
+        dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", Name);
         if (leftHandSkeleton.Bones.Count > 0 || rightHandSkeleton.Bones.Count > 0)
         {
             for (int i = (int)leftHandSkeleton.GetCurrentStartBoneId(); i < (int)leftHandSkeleton.GetCurrentEndBoneId(); i++)

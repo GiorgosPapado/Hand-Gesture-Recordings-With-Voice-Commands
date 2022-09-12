@@ -50,11 +50,8 @@ public class DataPersistenceManager : MonoBehaviour
         Guid fileName = Guid.NewGuid();
         TrackingData leftTrackData = new TrackingData();
         TrackingData rightTrackData = new TrackingData();
-        //string dt = DateTime.Now.ToString("dddd, dd MMMM yyyy");
         string tt = DateTime.Now.ToString("dd MMMM HH mm");
         Name = button.name + " " + ClassID +" "+ fileName.ToString().Substring(0, 5) + " "+ tt + " " + PlayerStats.Rounds.ToString() + ".json";
-        //string dt = DateTime.Now.ToString("date:HH:mm");
-        //string dt = DateTime.Now.ToString("HH:mm:F");
         dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Build2/Gestures", Name);
         if (leftHandSkeleton.Bones.Count > 0 || rightHandSkeleton.Bones.Count > 0)
         {

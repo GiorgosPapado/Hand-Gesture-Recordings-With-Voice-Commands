@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
-public class AnimationRead : MonoBehaviour
+public class RecordedGesture : MonoBehaviour
 {
     private FileDataHandler dataHandler;
     public OVRCustomSkeleton leftSkeleton;
@@ -35,7 +35,7 @@ public class AnimationRead : MonoBehaviour
     {
         StopCoroutine(nameof(MyJoints));
         counter = false;
-        if(lefty != null)
+        if (lefty != null)
             Destroy(lefty.gameObject);
         if (righty != null)
             Destroy(righty.gameObject);
@@ -50,7 +50,7 @@ public class AnimationRead : MonoBehaviour
         if (counter == false && gesture.activeInHierarchy)
         {
             counter = true;
-            jsonFile = manager.button.name + ".json";
+            jsonFile = manager.Name;
             //Debug.Log(manager.button.name);
             Debug.Log(jsonFile);
             dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Build2/Gestures", jsonFile);
@@ -119,16 +119,16 @@ public class AnimationRead : MonoBehaviour
                 {
                     righty.gameObject.SetActive(false);
                 }
-/*                    if (j == 0)
-                    {
-                        yield return new WaitForSeconds(Time.timeScale);
-                    }
-                    else
-                    {
-                        yield return new WaitForSeconds((hour[j] - hour[j - 1]));
-                    }*/
+                /*                    if (j == 0)
+                                    {
+                                        yield return new WaitForSeconds(Time.timeScale);
+                                    }
+                                    else
+                                    {
+                                        yield return new WaitForSeconds((hour[j] - hour[j - 1]));
+                                    }*/
                 yield return new WaitForSeconds(j == 0 ? Time.timeScale : hour[j] - hour[j - 1]);
-               
+
             }
         }
     }

@@ -142,12 +142,12 @@ public class OVRMeshRenderer : MonoBehaviour
 
 	private void Update()
 	{
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 		if (ShouldInitialize())
 		{
 			Initialize();
 		}
-#endif
+//#endif
 
 		IsDataValid = false;
 		IsDataHighConfidence = false;

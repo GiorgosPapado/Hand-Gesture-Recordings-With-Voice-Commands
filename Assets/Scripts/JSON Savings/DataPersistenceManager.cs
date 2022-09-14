@@ -2,6 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+public enum RECORD_TYPE
+{
+    Both,
+    Left,
+    Right
+}
 
 public class DataPersistenceManager : MonoBehaviour
 {
@@ -18,8 +24,8 @@ public class DataPersistenceManager : MonoBehaviour
     //bones try
     public Transform leftHandAnchor;
     public Transform rightHandAnchor;
-
-    [HideInInspector]
+    public RECORD_TYPE recordType = RECORD_TYPE.Both;
+   
     public string Name;
 
     private void Awake()
@@ -45,43 +51,56 @@ public class DataPersistenceManager : MonoBehaviour
         dataHandler.Save(gesture);
     }
 
-    public void Calculate(FrameData data)
-    {
-        Guid fileName = Guid.NewGuid();
+    private void CalculateInternal(FrameData data, string filename)
+    {        
         TrackingData leftTrackData = new TrackingData();
-        TrackingData rightTrackData = new TrackingData();
-        string tt = DateTime.Now.ToString("dd MMMM HH mm");
-        Name = button.name + " " + ClassID +" "+ fileName.ToString().Substring(0, 5) + " "+ tt + " " + PlayerStats.Rounds.ToString() + ".json";
-        dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", Name);
-        if (leftHandSkeleton.Bones.Count > 0 || rightHandSkeleton.Bones.Count > 0)
+        TrackingData rightTrackData = new TrackingData();       
+        
+        dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", filename);
+        if ((leftHandSkeleton.Bones.Count > 0) && (recordType == RECORD_TYPE.Both || recordType == RECORD_TYPE.Left))
         {
             for (int i = (int)leftHandSkeleton.GetCurrentStartBoneId(); i < (int)leftHandSkeleton.GetCurrentEndBoneId(); i++)
-            {                
+            {
                 leftTrackData.pos.Add(leftHandSkeleton.Bones[i].Transform.localPosition);
-                leftTrackData.rotation.Add(leftHandSkeleton.Bones[i].Transform.localRotation);           
+                leftTrackData.rotation.Add(leftHandSkeleton.Bones[i].Transform.localRotation);
             }
+            data.left_hand.Add(leftTrackData);
+            data.left_hand_global.pos.Add(leftHandAnchor.localPosition);
+            data.left_hand_global.rotation.Add(leftHandAnchor.localRotation);
+        }
 
+        if ((rightHandSkeleton.Bones.Count > 0) && (recordType == RECORD_TYPE.Both || recordType == RECORD_TYPE.Right))
+        {
             for (int j = (int)rightHandSkeleton.GetCurrentStartBoneId(); j < (int)rightHandSkeleton.GetCurrentEndBoneId(); j++)
             {
                 rightTrackData.pos.Add(rightHandSkeleton.Bones[j].Transform.localPosition);
                 rightTrackData.rotation.Add(rightHandSkeleton.Bones[j].Transform.localRotation);
             }
-            data.left_hand.Add(leftTrackData);
             data.right_hand.Add(rightTrackData);
-            data.timestamps.Add(Time.time);
-            if(leftHandSkeleton.Bones.Count > 0)
-            {
-                data.left_hand_global.pos.Add(leftHandAnchor.localPosition);
-                data.left_hand_global.rotation.Add(leftHandAnchor.localRotation);
-            }
-            if(rightHandSkeleton.Bones.Count > 0)
-            {
-                data.right_hand_global.pos.Add(rightHandAnchor.localPosition);
-                data.right_hand_global.rotation.Add(rightHandAnchor.localRotation);
-            }
+            data.right_hand_global.pos.Add(rightHandAnchor.localPosition);
+            data.right_hand_global.rotation.Add(rightHandAnchor.localRotation);
         }
-        data.hmd.pos.Add(hmd.localPosition);
-        data.hmd.rotation.Add(hmd.localRotation);
+
+        if (leftHandSkeleton.Bones.Count > 0 || rightHandSkeleton.Bones.Count > 0)
+        {
+            data.timestamps.Add(Time.time);
+            data.hmd.pos.Add(hmd.localPosition);
+            data.hmd.rotation.Add(hmd.localRotation);
+        }
+    }
+
+    public void Calculate(FrameData data)
+    {
+        Guid fileName = Guid.NewGuid();
+        string tt = DateTime.Now.ToString("dd MMMM HH mm");
+        Name = button.name + " " + ClassID + " " + fileName.ToString().Substring(0, 5) + " " + tt + " " + PlayerStats.Rounds.ToString() + ".json";
+        CalculateInternal(data, Name);
+    }
+
+    public void Test(FrameData data)
+    {
+        Name = "test.json";
+        CalculateInternal(data, Name);
     }
 }
 

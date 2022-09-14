@@ -49,26 +49,26 @@ public class RecordedGesture : MonoBehaviour
     {
         if (counter == false && gesture.activeInHierarchy)
         {
-            counter = true;
-            jsonFile = manager.Name;
-            //Debug.Log(manager.button.name);
-            Debug.Log(jsonFile);
-            dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", jsonFile);
-            frameData = dataHandler.Load().frameData;
-            left = frameData.left_hand;
-            right = frameData.right_hand;
-            hour = frameData.timestamps;
+                counter = true;
+                jsonFile = manager.Name;
+                //Debug.Log(manager.button.name);
+                Debug.Log(jsonFile);
+                dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", jsonFile);
+                frameData = dataHandler.Load().frameData;
+                left = frameData.left_hand;
+                right = frameData.right_hand;
+                hour = frameData.timestamps;
 
-            righty = Instantiate(rightSkeleton);
-            righty.transform.localScale *= 5;
-            lefty = Instantiate(leftSkeleton);
-            lefty.transform.localScale *= 5;
-            leftSkeleton.gameObject.SetActive(false);
-            rightSkeleton.gameObject.SetActive(false);
-            lefty.GetComponent<OVRHand>().enabled = false;
-            lefty.GetComponent<OVRCustomSkeleton>().enabled = false;
-            righty.GetComponent<OVRHand>().enabled = false;
-            righty.GetComponent<OVRCustomSkeleton>().enabled = false;
+                righty = Instantiate(rightSkeleton);
+                righty.transform.localScale *= 5;
+                lefty = Instantiate(leftSkeleton);
+                lefty.transform.localScale *= 5;
+                leftSkeleton.gameObject.SetActive(false);
+                rightSkeleton.gameObject.SetActive(false);
+                lefty.GetComponent<OVRHand>().enabled = false;
+                lefty.GetComponent<OVRCustomSkeleton>().enabled = false;
+                righty.GetComponent<OVRHand>().enabled = false;
+                righty.GetComponent<OVRCustomSkeleton>().enabled = false;
         }
     }
 
@@ -85,6 +85,10 @@ public class RecordedGesture : MonoBehaviour
         {
             ActiveStart();
             int frameCount = Math.Max(left.Count, right.Count);
+            if(frameCount == 0)
+            {
+                break;
+            }
             for (int j = 0; j < frameCount; j++)
             {
                 for (int i = 0; i < (int)lefty.GetCurrentEndBoneId(); i++)
@@ -121,16 +125,7 @@ public class RecordedGesture : MonoBehaviour
                 {
                     righty.gameObject.SetActive(false);
                 }
-                /*                    if (j == 0)
-                                    {
-                                        yield return new WaitForSeconds(Time.timeScale);
-                                    }
-                                    else
-                                    {
-                                        yield return new WaitForSeconds((hour[j] - hour[j - 1]));
-                                    }*/
                 yield return new WaitForSeconds(j == 0 ? Time.timeScale : hour[j] - hour[j - 1]);
-
             }
         }
     }

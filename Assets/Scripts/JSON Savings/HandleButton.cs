@@ -10,8 +10,7 @@ public class HandleButton : MonoBehaviour
     UnityEvent m_MyEvent = new UnityEvent();
     private Button[] buttons;
     private GameObject dismissButton;
-    DataPersistenceManager manager;
-
+    DataPersistenceManager manager;    
     private void Start()
     {
 /*        manager = GetComponent<DataPersistenceManager>();

@@ -12,7 +12,7 @@ using MsgPack;
 public class FileDataHandler
 {
     private string dataDirPath = "";
-    private string dataFileName = "";
+    public string dataFileName = "";
     
     public FileDataHandler(string dataDirPath, string dataFileName)
     {

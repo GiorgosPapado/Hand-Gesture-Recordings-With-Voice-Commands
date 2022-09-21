@@ -27,10 +27,12 @@ public class DataPersistenceManager : MonoBehaviour
     public RECORD_TYPE recordType = RECORD_TYPE.Both;
    
     public string Name;
+    public string lastGesture;
+    public string lastFileName;
 
     private void Awake()
     {
-        Debug.Log(Directory.GetCurrentDirectory() + "/Gestures");
+        //Debug.Log(Directory.GetCurrentDirectory() + "/Gestures");
         /*  
            Debug.Log(Application.persistentDataPath);
            if (Instance != null)
@@ -49,6 +51,8 @@ public class DataPersistenceManager : MonoBehaviour
         gesture.class_ID = ClassID;
         gesture.frameData = data;
         dataHandler.Save(gesture);
+        lastGesture = Name;
+        lastFileName = dataHandler.dataFileName;
     }
 
     private void CalculateInternal(FrameData data, string filename)

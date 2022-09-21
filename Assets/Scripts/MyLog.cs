@@ -11,11 +11,7 @@ public class MyLog : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Log1");
-        Debug.Log("Log2");
-        Debug.Log("Log3");
-        Debug.Log("Log4");
-        thisLog.text = "this is my text"; 
+        thisLog.text = "Let us Draw some Gestures"; 
     }
 
     void OnEnable()

@@ -52,13 +52,12 @@ public class AnimationRead : MonoBehaviour
             counter = true;
             jsonFile = manager.button.name + ".json";
             //Debug.Log(manager.button.name);
-            Debug.Log(jsonFile);
+            //Debug.Log(jsonFile);
             dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", jsonFile);
             frameData = dataHandler.Load().frameData;
             left = frameData.left_hand;
             right = frameData.right_hand;
             hour = frameData.timestamps;
-
             righty = Instantiate(rightSkeleton);
             righty.transform.localScale *= 5;
             lefty = Instantiate(leftSkeleton);

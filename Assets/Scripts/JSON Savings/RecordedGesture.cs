@@ -50,9 +50,9 @@ public class RecordedGesture : MonoBehaviour
         if (counter == false && gesture.activeInHierarchy)
         {
                 counter = true;
-                jsonFile = manager.Name;
+                jsonFile = manager.lastGesture;
                 //Debug.Log(manager.button.name);
-                Debug.Log(jsonFile);
+                //Debug.Log(jsonFile);
                 dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", jsonFile);
                 frameData = dataHandler.Load().frameData;
                 left = frameData.left_hand;
@@ -81,7 +81,7 @@ public class RecordedGesture : MonoBehaviour
 
     private IEnumerator MyJoints()
     {
-        while (true)
+        while (manager.lastFileName != "")
         {
             ActiveStart();
             int frameCount = Math.Max(left.Count, right.Count);

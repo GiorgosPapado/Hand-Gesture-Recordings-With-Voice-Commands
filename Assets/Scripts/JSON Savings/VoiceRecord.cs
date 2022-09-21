@@ -5,22 +5,24 @@ using System;
 using System.Linq;
 using System.IO;
 
-[RequireComponent (typeof(AudioSource))]
+
+[RequireComponent(typeof(AudioSource))]
 public class VoiceRecord : MonoBehaviour
 {
     [HideInInspector]
-    public KeywordRecognizer keywordRecognizer;    
+    public KeywordRecognizer keywordRecognizer;
     public Dictionary<string, Action> actions = new();
 
     private FrameData data = new();
     public DataPersistenceManager manager;
-    
+
     public ConfidenceLevel confidence;
     //private bool left = false;
     //private bool right = false;
     [HideInInspector]
     public bool write = false;
-
+    [HideInInspector]
+    public bool delete = false;
     private bool cancel = false;
     private bool test = false;
     public ToggleRecorder toggleColor;
@@ -36,31 +38,49 @@ public class VoiceRecord : MonoBehaviour
         actions.Add("stop", Stop);
         actions.Add("cancel", Cancel);
         actions.Add("test", Test);
-        actions.Add("delete", Delete);
-        keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray(),confidence);
+        actions.Add("delete file", Delete);
+        keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray(), confidence);
         keywordRecognizer.OnPhraseRecognized += RecognizedWord;
         foreach (var device in Microphone.devices)
-            {
-                Debug.Log("Name: " + device);
-               var p =  PhraseRecognitionSystem.isSupported;
-                var l = PhraseRecognitionSystem.Status;
-                Debug.Log(p);
-                Debug.Log(l);
-                Debug.Log(confidence);
-                
-            }
-    }
-      private void Update()
         {
-            if (write)
+            Debug.Log("Name: " + device);
+            var p = PhraseRecognitionSystem.isSupported;
+            var l = PhraseRecognitionSystem.Status;
+/*            Debug.Log(p);
+            Debug.Log(l);
+            Debug.Log(confidence);*/
+        }
+    }
+    private void Update()
+    {
+        if (write)
+        {
+            manager.Calculate(data);
+        }
+        if (cancel)
+        {
+            Purge();
+            cancel = false;
+        }
+        if (test)
+        {
+            manager.Test(data);
+        }
+        if (delete)
+        {   
+            if(manager.lastFileName != "")
             {
-                manager.Calculate(data);
+                Debug.Log(manager.lastFileName);
+                File.Delete(Directory.GetCurrentDirectory() + "/Gestures/" + manager.lastFileName);
+                manager.lastFileName = "";
+                manager.Name = "";
+                if (PlayerStats.Rounds > 0)
+                {
+                    PlayerStats.Rounds -= 1;
+                }
             }
-            if (cancel)
-            {
-                Purge();
-                cancel = false;
-            }
+            delete = false;
+        }
 
             //if (left || right || both || test)
             if(write || test)
@@ -71,19 +91,17 @@ public class VoiceRecord : MonoBehaviour
             {
                 toggleColor.RecordingOff();
             }
-
         }
 
     public void Record()
     {
         Purge();
         PlayerStats.Rounds += 1;
-        Debug.Log("Start Both Hands - Gesture");
+        Debug.Log("Start A new Gesture");
        
         sunLight.SetActive(true);
         test = cancel = false;
         write = true;
-
     }
 
     public void Stop()
@@ -95,10 +113,6 @@ public class VoiceRecord : MonoBehaviour
         //else
         if(write || test)
         {
-            if (PlayerStats.Rounds > 10)
-            {
-                PlayerStats.Rounds = 0;
-            }
             if(data.left_hand.Count > 0 || data.right_hand.Count > 0)
             {
                 manager.SaveGesture(data);
@@ -108,6 +122,7 @@ public class VoiceRecord : MonoBehaviour
             write = false;
             test = false;
             Debug.Log("Stop Gesture");
+            Debug.Log(manager.Name);
         }
     }
 
@@ -116,12 +131,10 @@ public class VoiceRecord : MonoBehaviour
         cancel = true;
         test = write = false;
         Debug.Log("Gestured Cancelled");
-
         if (PlayerStats.Rounds > 0)
         {
             PlayerStats.Rounds -= 1;
         }
-        Purge();
     }
 
     public void Purge()
@@ -140,7 +153,7 @@ public class VoiceRecord : MonoBehaviour
 
     public void Test()
     {
-        manager.Test(data);
+        Purge();
         sunLight.SetActive(true);
         Debug.Log("Start Testing Gesture");
         test = true;
@@ -149,30 +162,8 @@ public class VoiceRecord : MonoBehaviour
 
     public void Delete()
     {
-        Debug.Log("LETS DELETE IT");
-    }
-
-    private void KeyRecognition()
-    {
-/*        actions.Add("begin", Record);
-        actions.Add("stop", Stop);
-        actions.Add("left", LeftHanded);
-        actions.Add("right", RightHanded);
-        actions.Add("cancel", Cancel);
-        keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray(), confidence);
-        keywordRecognizer.OnPhraseRecognized += RecognizedWord;
-        keywordRecognizer.Start();
-        Debug.Log(keywordRecognizer.IsRunning.ToString());*/
-
-        foreach (var device in Microphone.devices)
-        {
-            Debug.Log("Name: " + device);
-            var p = PhraseRecognitionSystem.isSupported;
-            var l = PhraseRecognitionSystem.Status;
-            Debug.Log(p);
-            Debug.Log(l);
-            //Debug.Log(confidence);
-        }
+        test = write = false;
+        delete = true;
     }
 
     public void RecognizedWord(PhraseRecognizedEventArgs speech)
@@ -198,9 +189,9 @@ public class VoiceRecord : MonoBehaviour
             actions["test"].Invoke();
         }
 
-        if (speech.text == "delete")
+        if (speech.text == "delete file")
         {
-            actions["delete"].Invoke();
+            actions["delete file"].Invoke();
         }
     }
 }

@@ -26,17 +26,19 @@ public class AnimationHandler : MonoBehaviour
         if (manager.Name == "" || record.gestureNumber == 0)
         {
             animations.SetActive(false);
+            gesture.SetActive(false);
         }
         else
         {
             animations.SetActive(true);
+            gesture.SetActive(true);
         }
 
-        if(record.write == true)
+        if(record.write || record.delete)
         {
             gesture.SetActive(false);
         }
-        else if (record.write == false && record.gestureNumber > 0)
+        else if (record.write == false && record.gestureNumber > 0 && manager.lastFileName != "")
         {
             gesture.SetActive(true);
         }

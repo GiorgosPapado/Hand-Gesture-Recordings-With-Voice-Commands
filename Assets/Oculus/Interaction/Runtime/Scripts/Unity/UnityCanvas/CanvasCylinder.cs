@@ -244,7 +244,7 @@ namespace Oculus.Interaction.UnityCanvas
             }
 
             transform.position = _cylinder.transform.TransformPoint((projection * _cylinder.Radius) + localYOffset);
-            transform.rotation = _cylinder.transform.rotation * Quaternion.LookRotation(projection, localUp);
+            //transform.rotation = _cylinder.transform.rotation * Quaternion.LookRotation(projection, localUp);
 
             if (_meshCollider != null &&
                 _meshCollider.transform != transform &&

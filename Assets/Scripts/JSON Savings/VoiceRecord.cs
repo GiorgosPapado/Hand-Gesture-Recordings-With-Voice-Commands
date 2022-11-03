@@ -37,7 +37,7 @@ public class VoiceRecord : MonoBehaviour
         actions.Add("begin", Record);
         actions.Add("stop", Stop);
         actions.Add("cancel", Cancel);
-        actions.Add("test", Test);
+        //actions.Add("test", Test);
         actions.Add("delete file", Delete);
         keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray(), confidence);
         keywordRecognizer.OnPhraseRecognized += RecognizedWord;
@@ -46,9 +46,6 @@ public class VoiceRecord : MonoBehaviour
             Debug.Log("Name: " + device);
             var p = PhraseRecognitionSystem.isSupported;
             var l = PhraseRecognitionSystem.Status;
-/*            Debug.Log(p);
-            Debug.Log(l);
-            Debug.Log(confidence);*/
         }
     }
     private void Update()
@@ -96,21 +93,29 @@ public class VoiceRecord : MonoBehaviour
     public void Record()
     {
         Purge();
-        PlayerStats.Rounds += 1;
-        Debug.Log("Start A new Gesture");
-       
+        if (write == false)
+        {
+            PlayerStats.Rounds += 1;
+            Debug.Log("Start A new Gesture");
+        }
+
         sunLight.SetActive(true);
         test = cancel = false;
         write = true;
     }
 
+/*    public void Test()
+    {
+        Purge();
+        gestureNumber = 0;
+        sunLight.SetActive(true);
+        Debug.Log("Start Testing Gesture");
+        write = cancel = false;
+        test = true;
+    }*/
+
     public void Stop()
     {
-        //if (right == left && left == both && test == false)
-        //{ 
-        
-        //}
-        //else
         if(write || test)
         {
             if(data.left_hand.Count > 0 || data.right_hand.Count > 0)
@@ -151,15 +156,6 @@ public class VoiceRecord : MonoBehaviour
         sunLight.SetActive(false);
     }
 
-    public void Test()
-    {
-        Purge();
-        sunLight.SetActive(true);
-        Debug.Log("Start Testing Gesture");
-        test = true;
-        write = cancel = false;
-    }
-
     public void Delete()
     {
         test = write = false;
@@ -184,10 +180,10 @@ public class VoiceRecord : MonoBehaviour
             actions["cancel"].Invoke();
         }
 
-        if (speech.text == "test")
+/*        if (speech.text == "test")
         {
             actions["test"].Invoke();
-        }
+        }*/
 
         if (speech.text == "delete file")
         {

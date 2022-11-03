@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+
 public enum RECORD_TYPE
 {
     Both,
@@ -12,8 +13,7 @@ public enum RECORD_TYPE
 public class DataPersistenceManager : MonoBehaviour
 {
     private FileDataHandler dataHandler;
-    //public static DataPersistenceManager Instance { get; private set; }
-    private DynamicGesture gesture = new DynamicGesture();
+    private DynamicGesture gesture = new();
     public OVRSkeleton leftHandSkeleton;
     public OVRSkeleton rightHandSkeleton;
     public Transform hmd;
@@ -25,10 +25,24 @@ public class DataPersistenceManager : MonoBehaviour
     public Transform leftHandAnchor;
     public Transform rightHandAnchor;
     public RECORD_TYPE recordType = RECORD_TYPE.Both;
-   
+
+    private Guid FolderGui;
+    private string time = DateTime.Now.ToString("dd MMMM HH mm");
     public string Name;
     public string lastGesture;
     public string lastFileName;
+    public string FolderName;
+
+    public GameObject infinityImageLeft;
+    public GameObject infinityImageRight;
+
+
+
+    private void Start()
+    {
+        FolderGui = Guid.NewGuid();
+        FolderName = FolderGui.ToString().Substring(0, 5) + time;
+    }
 
     private void Awake()
     {
@@ -58,9 +72,9 @@ public class DataPersistenceManager : MonoBehaviour
     private void CalculateInternal(FrameData data, string filename)
     {        
         TrackingData leftTrackData = new TrackingData();
-        TrackingData rightTrackData = new TrackingData();       
-        
-        dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", filename);
+        TrackingData rightTrackData = new TrackingData();
+
+        dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures/" + FolderName, filename);
         if ((leftHandSkeleton.Bones.Count > 0) && (recordType == RECORD_TYPE.Both || recordType == RECORD_TYPE.Left))
         {
             for (int i = (int)leftHandSkeleton.GetCurrentStartBoneId(); i < (int)leftHandSkeleton.GetCurrentEndBoneId(); i++)

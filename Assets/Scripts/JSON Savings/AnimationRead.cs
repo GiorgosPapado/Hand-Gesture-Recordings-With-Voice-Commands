@@ -35,14 +35,14 @@ public class AnimationRead : MonoBehaviour
     {
         StopCoroutine(nameof(MyJoints));
         counter = false;
-        if(lefty != null)
+        if (lefty != null)
             Destroy(lefty.gameObject);
         if (righty != null)
             Destroy(righty.gameObject);
-        //if(leftSkeleton.gameObject != null)
         leftSkeleton.gameObject.SetActive(true);
-        //if(rightSkeleton.gameObject != null)
         rightSkeleton.gameObject.SetActive(true);
+        manager.infinityImageLeft.SetActive(false);
+        manager.infinityImageRight.SetActive(false);
     }
 
     public void ActiveStart()
@@ -51,8 +51,6 @@ public class AnimationRead : MonoBehaviour
         {
             counter = true;
             jsonFile = manager.button.name + ".json";
-            //Debug.Log(manager.button.name);
-            //Debug.Log(jsonFile);
             dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", jsonFile);
             frameData = dataHandler.Load().frameData;
             left = frameData.left_hand;
@@ -69,6 +67,11 @@ public class AnimationRead : MonoBehaviour
             righty.GetComponent<OVRHand>().enabled = false;
             righty.GetComponent<OVRCustomSkeleton>().enabled = false;
         }
+
+        if (manager.button.name == "LeftInfinity")
+            manager.infinityImageLeft.SetActive(true);
+        else if(manager.button.name == "RightInfinity")
+            manager.infinityImageRight.SetActive(true);
     }
 
     private (Vector3 pos, Quaternion rot) TransformToHMDSpace(Vector3 pos, Quaternion rot, Vector3 HMDPos, Quaternion HMDRot)

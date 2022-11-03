@@ -53,7 +53,7 @@ public class RecordedGesture : MonoBehaviour
                 jsonFile = manager.lastGesture;
                 //Debug.Log(manager.button.name);
                 //Debug.Log(jsonFile);
-                dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures", jsonFile);
+                dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Gestures/" + manager.FolderName, jsonFile);
                 frameData = dataHandler.Load().frameData;
                 left = frameData.left_hand;
                 right = frameData.right_hand;

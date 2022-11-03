@@ -18,21 +18,29 @@ public class JSONRead : MonoBehaviour
     private List<float> hour = new();
     private FrameData frameData;
     private DataPersistenceManager manager;
-    
+
+    private Coroutine coroutine;
     private void Start()
     {
-        StartCoroutine(nameof(MyJoints));
-    }
+        //coroutine = StartCoroutine(nameof(MyJoints));
+        //StartCoroutine(nameof(MyJoints));    
+}
 
-    private void Awake()
+    private void LoadJSONFile()
     {
-        manager = GetComponent<DataPersistenceManager>();
-        dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/Build2/Gestures", jsonFile);
+
+        //manager = GetComponent<DataPersistenceManager>();
+        dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/build/Gestures", jsonFile);
         frameData = dataHandler.Load().frameData;
         left = frameData.left_hand;
         right = frameData.right_hand;
         hour = frameData.timestamps;
-    }    
+    }
+
+    private void Awake()
+    {
+        LoadJSONFile();
+    }
 
     private (Vector3 pos, Quaternion rot) TransformToHMDSpace(Vector3 pos, Quaternion rot, Vector3 HMDPos, Quaternion HMDRot)
     {
@@ -41,54 +49,8 @@ public class JSONRead : MonoBehaviour
         return (tpos, trot);
     }
 
-    public void CreateGesture()
-    {
-        dataHandler = new(Application.persistentDataPath, manager.Name);
-    }
 
-    /*    private void Update()
-        {
-        int frameCount = Math.Max(left.Count, right.Count);
-            if (frameCount > 0)
-                ss[0] = Time.time;
 
-                for (int j = 0; j < frameCount; j++)
-                {
-                    for (int i = 0; i < (int)leftSkeleton.GetCurrentEndBoneId(); i++)
-                    {
-                        if (left.Count > 0)
-                        {
-                            leftSkeleton.CustomBones[i].transform.localPosition = left[j].pos[i];
-                            leftSkeleton.CustomBones[i].transform.localRotation = left[j].rotation[i];
-                        }
-                        if (right.Count > 0)
-                        {
-                            rightSkeleton.CustomBones[i].transform.localPosition = right[j].pos[i];
-                            rightSkeleton.CustomBones[i].transform.localRotation = right[j].rotation[i];
-                        }
-                    }
-                    if (left.Count > 0)
-                    {
-                        var tform = TransformToHMDSpace(frameData.left_hand_global.pos[j], frameData.left_hand_global.rotation[j], frameData.hmd.pos[0], frameData.hmd.rotation[0]);
-                        leftSkeleton.transform.localPosition = tform.pos;
-                        leftSkeleton.transform.localRotation = tform.rot;
-                    }
-                    if(right.Count > 0)
-                    {
-                        var tform = TransformToHMDSpace(frameData.right_hand_global.pos[j], frameData.right_hand_global.rotation[j], frameData.hmd.pos[0], frameData.hmd.rotation[0]);
-                        rightSkeleton.transform.localPosition = tform.pos;
-                        rightSkeleton.transform.localRotation = tform.rot;
-                    }
-
-                    if (left.Count < 1)
-                        leftSkeleton.gameObject.SetActive(false);
-
-                     if(right.Count < 1)
-                        rightSkeleton.gameObject.SetActive(false);
-
-                ss[j] = hour[j] - Time.time;
-                }
-            } */
     private IEnumerator MyJoints()
     {
         while (true)
@@ -140,5 +102,43 @@ public class JSONRead : MonoBehaviour
                 }
             }
         } 
+    }
+
+    /*    public void OnFileLoaded()
+        {
+            //manager = GetComponent<DataPersistenceManager>();
+            dataHandler = new FileDataHandler(Directory.GetCurrentDirectory() + "/build/Gestures", jsonFile);
+            frameData = dataHandler.Load().frameData;
+            left = frameData.left_hand;
+            right = frameData.right_hand;
+            hour = frameData.timestamps;
+        }
+
+        private void OnEnable()
+        {
+            OnFileLoaded();
+        }*/
+
+    private void OnEnable()
+    {
+        if(coroutine == null)
+        {
+            coroutine = StartCoroutine(nameof(MyJoints));
+        }        
+    }
+    private void OnDisable()
+    {
+        StopCoroutine(coroutine);
+        coroutine = null;
+    }
+
+    public void Refresh()
+    {
+        if(coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+        LoadJSONFile();
+        coroutine = StartCoroutine(nameof(MyJoints));
     }
 }
